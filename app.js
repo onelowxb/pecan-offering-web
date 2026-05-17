@@ -1,5 +1,6 @@
 // API base. Overridden by config.js for local dev (loaded before this file).
 const API_BASE = window.PECAN_API_BASE || "https://76-13-126-85.sslip.io/pecan";
+const TOKEN_KEY = "pecan_token";
 
 const SCREENS = ["login", "main", "busy", "result"];
 
@@ -9,12 +10,24 @@ function show(name) {
   }
 }
 
+function getToken() {
+  try { return localStorage.getItem(TOKEN_KEY); } catch (_) { return null; }
+}
+function setToken(t) {
+  try { localStorage.setItem(TOKEN_KEY, t); } catch (_) {}
+}
+function clearToken() {
+  try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+}
+
 async function post(path, body, isForm) {
-  const opts = { method: "POST", credentials: "include" };
+  const opts = { method: "POST", headers: {} };
+  const token = getToken();
+  if (token) opts.headers["Authorization"] = "Bearer " + token;
   if (isForm) {
     opts.body = body;
   } else {
-    opts.headers = { "Content-Type": "application/json" };
+    opts.headers["Content-Type"] = "application/json";
     opts.body = JSON.stringify(body);
   }
   let r;
@@ -27,6 +40,16 @@ async function post(path, body, isForm) {
   return { status: r.status, body: json };
 }
 
+// On load: if we have a stored token, skip to main screen (best effort — server
+// will 401 on /upload if the token is stale, and we'll bounce back to login then).
+if (getToken()) {
+  // We don't know the display name without round-tripping; leave blank — it's cosmetic.
+  document.getElementById("display-name").textContent = "";
+  show("main");
+} else {
+  show("login");
+}
+
 document.getElementById("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const fd = new FormData(e.target);
@@ -36,7 +59,8 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     username: fd.get("username"),
     password: fd.get("password"),
   });
-  if (status === 200 && body.ok) {
+  if (status === 200 && body.ok && body.token) {
+    setToken(body.token);
     document.getElementById("display-name").textContent = body.display_name;
     show("main");
   } else {
@@ -46,7 +70,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 });
 
 document.getElementById("signout").addEventListener("click", async () => {
-  await post("/logout", {});
+  clearToken();
   show("login");
 });
 
@@ -73,7 +97,8 @@ for (const type of ["monday", "thursday"]) {
       fail.hidden = true;
       document.getElementById("deposit-id").textContent = body.deposit_id;
     } else if (status === 401) {
-      // Session expired — bounce back to login.
+      // Token expired or rejected — bounce to login.
+      clearToken();
       show("login");
       return;
     } else {
