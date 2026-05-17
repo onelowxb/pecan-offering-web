@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pecan Offering</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main id="login-screen" class="screen">
+    <h1>Pecan Offering</h1>
+    <p class="lead">Sign in to post the weekly offering.</p>
+    <form id="login-form">
+      <label>Who are you?
+        <select name="username" required>
+          <option value="">— pick one —</option>
+          <option>Janie Narducci</option>
+          <option>Phil Walter</option>
+        </select>
+      </label>
+      <label>Password
+        <input type="password" name="password" required autocomplete="current-password">
+      </label>
+      <button type="submit">Sign in</button>
+      <p class="error" id="login-error" hidden></p>
+    </form>
+  </main>
+
+  <main id="main-screen" class="screen" hidden>
+    <header>
+      <h1>Hi <span id="display-name"></span></h1>
+      <button id="signout" class="link" type="button">Sign out</button>
+    </header>
+    <p class="lead">Pick what you're uploading.</p>
+    <div class="actions">
+      <button class="big" type="button" data-type="monday">
+        <span class="icon">📄</span>
+        <span class="label">Upload Monday Tally Sheet</span>
+        <span class="hint">Photo or PDF of the handwritten sheet</span>
+      </button>
+      <button class="big" type="button" data-type="thursday">
+        <span class="icon">📊</span>
+        <span class="label">Upload Thursday EZ Tithe CSV</span>
+        <span class="hint">Payments-*.csv export</span>
+      </button>
+    </div>
+    <input type="file" id="picker-monday"   accept=".jpg,.jpeg,.png,.pdf,.heic" hidden>
+    <input type="file" id="picker-thursday" accept=".csv" hidden>
+  </main>
+
+  <main id="busy-screen" class="screen" hidden>
+    <div class="spinner"></div>
+    <p class="lead">Posting to QuickBooks…</p>
+  </main>
+
+  <main id="result-screen" class="screen" hidden>
+    <div id="result-ok" hidden>
+      <div class="check">✓</div>
+      <h1>Posted to QuickBooks.</h1>
+      <p class="lead">Deposit #<span id="deposit-id"></span></p>
+    </div>
+    <div id="result-fail" hidden>
+      <div class="x">✕</div>
+      <h1>That didn't work.</h1>
+      <p class="lead" id="result-error"></p>
+    </div>
+    <button id="again" type="button">Upload another</button>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
