@@ -47,7 +47,11 @@ Explicitly out of scope for v1:
 
 **Backend:** new FastAPI service at `/opt/pecan-api/` on the Hostinger VPS, running under systemd on port 8090, fronted by the existing nginx + sslip.io TLS cert. Two endpoints: `POST /pecan/login`, `POST /pecan/upload`.
 
-**Engine:** existing `C:\Users\ben.holt\code\quick-agent\` code lifted to `/opt/quick-agent/` on the VPS. Same Python deps, same QBO posting logic. The FastAPI wrapper imports it directly — no rewrites.
+**Engine:** existing `C:\Users\ben.holt\code\quick-agent\` code lifted to `/opt/quick-agent/` on the VPS. Same Python deps, same QBO posting logic. The FastAPI wrapper imports it directly.
+
+**Engine extension — programmatic Monday OCR (NEW):** the existing engine has no programmatic OCR. The `/pecan-offering` skill currently relies on a human-driven Claude Code session to vision-read the photo, transcribe, and (per the skill) ask for name spot-checks before writing `offering_data.py`. For a VPS service with no human in the loop, the backend must call the Anthropic API directly with the photo + an extraction prompt (derived from `~/.claude/skills/pecan-offering/references/extraction-schema.md`) and parse a structured JSON response into the same `CONTRIBUTIONS` shape the engine expects. The existing math-validation gate (`validate.py`) still runs and stops any post where column sums disagree with printed totals.
+
+**Accepted risk (auto-post path, Q2:A):** the skill's interactive name spot-check is removed. Math errors are caught by validation; name misreads (e.g., "Hamilton" → "Hampton") are not — they post to QBO with a wrong donor Entity and are corrected after the fact in QBO if noticed. Per Ben's explicit choice when this was surfaced during planning.
 
 **QBO token:** moves from Ben's PC to the VPS via a one-shot re-auth script. Refresh token lives in `/opt/pecan-api/.env`.
 
