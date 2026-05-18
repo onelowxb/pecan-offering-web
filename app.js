@@ -141,10 +141,23 @@ for (const type of ["monday", "thursday"]) {
 const FIELD_LABELS = {
   total_contributions: "Total",
   tithe: "Tithe",
-  bldg_fund: "Bldg Fund",
+  building: "Building",
+  missions: "Missions",
+  manna: "Manna",
+  youth: "Youth",
   missionary: "Missionary",
   total_cash: "Cash",
   total_checks: "Checks",
+};
+
+// printed_totals key -> fund_splits key on each contribution row.
+const FUND_KEY = {
+  tithe: "Tithe",
+  building: "Building",
+  missions: "Missions",
+  manna: "Manna",
+  youth: "Youth",
+  missionary: "Missionary",
 };
 
 function num(v) {
@@ -157,25 +170,18 @@ function fmt(v) {
 
 function computeFromParsed(parsed) {
   const contribs = parsed.contributions || [];
-  let total = 0, tithe = 0, bldg = 0, miss = 0, cash = 0, checks = 0;
+  const out = { total_contributions: 0, total_cash: 0, total_checks: 0 };
+  for (const k of Object.keys(FUND_KEY)) out[k] = 0;
   for (const c of contribs) {
     const t = num(c.total);
-    total += t;
+    out.total_contributions += t;
     const fs = c.fund_splits || {};
-    tithe += num(fs.Tithe);
-    bldg  += num(fs["Bldg Fund"]);
-    miss  += num(fs.Missionary);
-    if ((c.payment || "").toLowerCase() === "cash") cash += t;
-    else checks += t;
+    for (const [pk, fk] of Object.entries(FUND_KEY)) out[pk] += num(fs[fk]);
+    if ((c.payment || "").toLowerCase() === "cash") out.total_cash += t;
+    else out.total_checks += t;
   }
-  return {
-    total_contributions: +total.toFixed(2),
-    tithe: +tithe.toFixed(2),
-    bldg_fund: +bldg.toFixed(2),
-    missionary: +miss.toFixed(2),
-    total_cash: +cash.toFixed(2),
-    total_checks: +checks.toFixed(2),
-  };
+  for (const k of Object.keys(out)) out[k] = +out[k].toFixed(2);
+  return out;
 }
 
 function diffTotals(computed, printed) {
@@ -287,7 +293,10 @@ function renderDonors() {
       donorEditField("Check #", "check", c.check),
       donorEditField("Total $", "total", c.total, { numeric: true }),
       donorEditField("Tithe $", "Tithe", fs.Tithe, { numeric: true, split: true }),
-      donorEditField("Bldg Fund $", "Bldg Fund", fs["Bldg Fund"], { numeric: true, split: true }),
+      donorEditField("Building $", "Building", fs.Building, { numeric: true, split: true }),
+      donorEditField("Missions $", "Missions", fs.Missions, { numeric: true, split: true }),
+      donorEditField("Manna $", "Manna", fs.Manna, { numeric: true, split: true }),
+      donorEditField("Youth $", "Youth", fs.Youth, { numeric: true, split: true }),
       donorEditField("Missionary $", "Missionary", fs.Missionary, { numeric: true, split: true }),
       donorEditField("Missionary memo", "missionary", c.missionary),
     ]);
@@ -337,9 +346,10 @@ function donorMeta(c) {
   if ((c.payment || "Check") === "Check" && c.check) parts.push("#" + c.check);
   const fs = c.fund_splits || {};
   const splits = [];
-  if (num(fs.Tithe))        splits.push("T " + fmt(fs.Tithe));
-  if (num(fs["Bldg Fund"])) splits.push("B " + fmt(fs["Bldg Fund"]));
-  if (num(fs.Missionary))   splits.push("M " + fmt(fs.Missionary));
+  const tag = [["Tithe","T"],["Building","B"],["Missions","Ms"],["Manna","Mn"],["Youth","Y"],["Missionary","Mi"]];
+  for (const [k, abbr] of tag) {
+    if (num(fs[k])) splits.push(abbr + " " + fmt(fs[k]));
+  }
   if (splits.length) parts.push(splits.join(" / "));
   return parts.join(" · ");
 }
