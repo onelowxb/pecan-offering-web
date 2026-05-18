@@ -247,6 +247,9 @@ label.inline { font-weight: 500; }
 .donor-name { font-weight: 500; font-size: 15px; }
 .donor-meta { font-size: 13px; color: var(--muted); margin-top: 2px; }
 .donor-total { font-variant-numeric: tabular-nums; font-weight: 600; }
+.donor.row-mismatch { background: #fff4f3; border-left: 4px solid var(--err); }
+.donor.row-mismatch .donor-total { color: var(--err); }
+.row-flag { font-size: 13px; color: var(--err); font-weight: 500; margin-top: 4px; }
 .donor-edit {
   display: none;
   padding: 10px 12px 14px;

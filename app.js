@@ -168,6 +168,13 @@ function fmt(v) {
   return num(v).toFixed(2);
 }
 
+function rowSplitSum(c) {
+  const fs = c.fund_splits || {};
+  let s = 0;
+  for (const fk of Object.values(FUND_KEY)) s += num(fs[fk]);
+  return +s.toFixed(2);
+}
+
 function computeFromParsed(parsed) {
   const contribs = parsed.contributions || [];
   const out = { total_contributions: 0, total_cash: 0, total_checks: 0 };
@@ -279,11 +286,17 @@ function renderDonors() {
 
   contribs.forEach((c, idx) => {
     const fs = c.fund_splits || {};
+    const splitSum = rowSplitSum(c);
+    const total = num(c.total);
+    const rowOff = Math.abs(splitSum - total) > 0.005;
+    const flagEl = rowOff
+      ? makeEl("div", { class: "row-flag" }, [`Splits sum to $${fmt(splitSum)}, but total is $${fmt(total)}. Fix below.`])
+      : null;
     const nameEl = makeEl("div", { class: "donor-name" }, [c.name || "(no name)"]);
     const metaEl = makeEl("div", { class: "donor-meta" }, [donorMeta(c)]);
     const totEl = makeEl("div", { class: "donor-total" }, ["$" + fmt(c.total)]);
     const row = makeEl("div", { class: "donor-row" }, [
-      makeEl("div", null, [nameEl, metaEl]),
+      makeEl("div", null, [nameEl, metaEl, flagEl].filter(Boolean)),
       totEl,
     ]);
 
@@ -305,7 +318,7 @@ function renderDonors() {
     const actions = makeEl("div", { class: "row-actions" }, [delBtn, doneBtn]);
     const edit = makeEl("div", { class: "donor-edit" }, [grid, actions]);
 
-    const el = makeEl("div", { class: "donor" }, [row, edit]);
+    const el = makeEl("div", { class: rowOff ? "donor row-mismatch open" : "donor" }, [row, edit]);
 
     row.onclick = () => el.classList.toggle("open");
 
@@ -326,6 +339,16 @@ function renderDonors() {
         nameEl.textContent = c.name || "(no name)";
         totEl.textContent = "$" + fmt(c.total);
         metaEl.textContent = donorMeta(c);
+        const newSum = rowSplitSum(c);
+        const newTotal = num(c.total);
+        const stillOff = Math.abs(newSum - newTotal) > 0.005;
+        el.classList.toggle("row-mismatch", stillOff);
+        if (flagEl) {
+          flagEl.textContent = stillOff
+            ? `Splits sum to $${fmt(newSum)}, but total is $${fmt(newTotal)}. Fix below.`
+            : "";
+          flagEl.hidden = !stillOff;
+        }
         refreshTotals();
       });
     });
