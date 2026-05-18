@@ -49,6 +49,37 @@
     <input type="file" id="picker-thursday" accept=".csv" hidden>
   </main>
 
+  <main id="review-screen" class="screen" hidden>
+    <header>
+      <h1>Check what we read</h1>
+      <button id="review-cancel" class="link" type="button">Cancel</button>
+    </header>
+    <p class="lead">Tap any number to fix it. Then post.</p>
+
+    <p id="review-warn" class="warn" hidden></p>
+
+    <label class="inline">
+      Service date
+      <input id="rv-date" type="text" inputmode="numeric" placeholder="YYYY-MM-DD">
+    </label>
+
+    <h2 class="section">Totals</h2>
+    <div class="totals-grid">
+      <div class="th">Field</div><div class="th">From rows</div><div class="th">Printed</div>
+      <div class="lbl">Tithe</div><div class="num" data-computed="tithe"></div>            <input class="num-in" data-printed="tithe" type="text" inputmode="decimal">
+      <div class="lbl">Bldg Fund</div><div class="num" data-computed="bldg_fund"></div>    <input class="num-in" data-printed="bldg_fund" type="text" inputmode="decimal">
+      <div class="lbl">Missionary</div><div class="num" data-computed="missionary"></div> <input class="num-in" data-printed="missionary" type="text" inputmode="decimal">
+      <div class="lbl">Cash</div><div class="num" data-computed="total_cash"></div>        <input class="num-in" data-printed="total_cash" type="text" inputmode="decimal">
+      <div class="lbl">Checks</div><div class="num" data-computed="total_checks"></div>   <input class="num-in" data-printed="total_checks" type="text" inputmode="decimal">
+      <div class="lbl strong">Total</div><div class="num strong" data-computed="total_contributions"></div><input class="num-in strong" data-printed="total_contributions" type="text" inputmode="decimal">
+    </div>
+
+    <h2 class="section">Donors (<span id="rv-count">0</span>)</h2>
+    <div id="rv-donors" class="donors"></div>
+
+    <button id="rv-post" type="button" class="primary-wide">Post to QuickBooks</button>
+  </main>
+
   <main id="busy-screen" class="screen" hidden>
     <div class="spinner"></div>
     <p class="lead">Posting to QuickBooks…</p>

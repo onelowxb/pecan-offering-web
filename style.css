@@ -170,3 +170,130 @@ button.link:hover {
 
 #result-screen { text-align: center; }
 #result-screen button { margin-top: 12px; }
+
+.section {
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin: 22px 0 10px;
+}
+
+label.inline { font-weight: 500; }
+
+.warn {
+  background: #fff6e6;
+  border: 1px solid #e8c98a;
+  color: #6b4a07;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin: 4px 0 12px;
+}
+
+.totals-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  gap: 8px 10px;
+  align-items: center;
+}
+.totals-grid .th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.totals-grid .lbl { font-size: 15px; }
+.totals-grid .num,
+.totals-grid .num-in {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  font-size: 15px;
+}
+.totals-grid .num { padding: 10px 4px; }
+.totals-grid .num-in {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 0;
+  width: 100%;
+  background: #fff;
+}
+.totals-grid .strong { font-weight: 700; }
+.totals-grid .mismatch { color: var(--err); }
+
+.donors {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fbfaf6;
+  max-height: 360px;
+  overflow-y: auto;
+}
+.donor {
+  border-bottom: 1px solid var(--border);
+}
+.donor:last-child { border-bottom: 0; }
+.donor-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  padding: 10px 12px;
+  cursor: pointer;
+  align-items: center;
+}
+.donor-row:hover { background: #fff; }
+.donor-name { font-weight: 500; font-size: 15px; }
+.donor-meta { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.donor-total { font-variant-numeric: tabular-nums; font-weight: 600; }
+.donor-edit {
+  display: none;
+  padding: 10px 12px 14px;
+  background: #fff;
+  border-top: 1px dashed var(--border);
+}
+.donor.open .donor-edit { display: block; }
+.donor-edit .grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.donor-edit label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  font-weight: 500;
+  margin: 4px 0 0;
+}
+.donor-edit input, .donor-edit select {
+  padding: 8px 10px;
+  font-size: 15px;
+  margin-top: 4px;
+}
+.donor-edit .row-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.donor-edit button.danger {
+  background: transparent;
+  color: var(--err);
+  border: 1px solid var(--border);
+  font-size: 14px;
+  padding: 8px 12px;
+}
+.donor-edit button.done {
+  font-size: 14px;
+  padding: 8px 14px;
+}
+
+.primary-wide {
+  width: 100%;
+  margin-top: 18px;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: 600;
+}
