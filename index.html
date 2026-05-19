@@ -4,103 +4,203 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Pecan Offering</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..800,0..100&family=DM+Sans:opsz,wght@9..40,300..700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+  <!-- Drifting leaves: gentle ambient motion on the parchment background -->
+  <div class="leaves" aria-hidden="true">
+    <svg class="leaf leaf-1" viewBox="0 0 64 64"><path d="M32 4 C 48 18, 56 34, 32 60 C 8 34, 16 18, 32 4 Z" /><path class="vein" d="M32 8 L 32 56" /></svg>
+    <svg class="leaf leaf-2" viewBox="0 0 64 64"><path d="M32 4 C 48 18, 56 34, 32 60 C 8 34, 16 18, 32 4 Z" /><path class="vein" d="M32 8 L 32 56" /></svg>
+    <svg class="leaf leaf-3" viewBox="0 0 64 64"><path d="M32 4 C 48 18, 56 34, 32 60 C 8 34, 16 18, 32 4 Z" /><path class="vein" d="M32 8 L 32 56" /></svg>
+    <svg class="leaf leaf-4" viewBox="0 0 64 64"><path d="M32 4 C 48 18, 56 34, 32 60 C 8 34, 16 18, 32 4 Z" /><path class="vein" d="M32 8 L 32 56" /></svg>
+    <svg class="leaf leaf-5" viewBox="0 0 64 64"><path d="M32 4 C 48 18, 56 34, 32 60 C 8 34, 16 18, 32 4 Z" /><path class="vein" d="M32 8 L 32 56" /></svg>
+  </div>
+
+  <!-- Reusable ornament: small pecan leaf flanked by hairlines, used as section divider -->
+  <template id="tpl-ornament">
+    <span class="ornament" aria-hidden="true">
+      <span class="rule"></span>
+      <svg viewBox="0 0 24 24" class="ornament-leaf">
+        <path d="M12 2 C 18 7, 21 13, 12 22 C 3 13, 6 7, 12 2 Z" />
+        <path class="vein" d="M12 4 L 12 20" />
+      </svg>
+      <span class="rule"></span>
+    </span>
+  </template>
+
   <main id="login-screen" class="screen">
-    <h1>Pecan Offering</h1>
-    <p class="lead">Sign in to post the weekly offering.</p>
-    <form id="login-form">
-      <label>Who are you?
-        <select name="username" required>
-          <option value="">— pick one —</option>
-          <option>Janie Narducci</option>
-          <option>Phil Walter</option>
-        </select>
-      </label>
-      <label>Password
-        <input type="password" name="password" required autocomplete="current-password">
-      </label>
-      <button type="submit">Sign in</button>
-      <p class="error" id="login-error" hidden></p>
-    </form>
+    <div class="screen-inner">
+      <div class="brand">
+        <img class="brand-logo" src="assets/pecan-baptist.png" alt="Pecan Baptist Church">
+      </div>
+      <h1 class="display">Pecan <em>Offering</em></h1>
+      <span class="ornament"><span class="rule"></span><svg viewBox="0 0 24 24" class="ornament-leaf"><path d="M12 2 C 18 7, 21 13, 12 22 C 3 13, 6 7, 12 2 Z" /><path class="vein" d="M12 4 L 12 20" /></svg><span class="rule"></span></span>
+      <p class="lead">Sign in to record this week's tithes &amp; offerings.</p>
+      <form id="login-form" class="stack">
+        <label>
+          <span class="field-label">Who are you?</span>
+          <select name="username" required>
+            <option value="">— pick one —</option>
+            <option>Janie Narducci</option>
+            <option>Phil Walter</option>
+          </select>
+        </label>
+        <label>
+          <span class="field-label">Password</span>
+          <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••••">
+        </label>
+        <button type="submit" class="primary primary-wide">Sign in</button>
+        <p class="error" id="login-error" hidden></p>
+      </form>
+    </div>
   </main>
 
   <main id="main-screen" class="screen" hidden>
-    <header>
-      <h1>Hi <span id="display-name"></span></h1>
-      <button id="signout" class="link" type="button">Sign out</button>
-    </header>
-    <p class="lead">Pick what you're uploading.</p>
-    <div class="actions">
-      <button class="big" type="button" data-type="monday">
-        <span class="icon">📄</span>
-        <span class="label">Upload Monday Tally Sheet</span>
-        <span class="hint">Photo or PDF of the handwritten sheet</span>
-      </button>
-      <button class="big" type="button" data-type="thursday">
-        <span class="icon">📊</span>
-        <span class="label">Upload Thursday EZ Tithe CSV</span>
-        <span class="hint">Payments-*.csv export</span>
-      </button>
+    <div class="screen-inner">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Welcome</p>
+          <h1 class="display"><span id="display-name"></span></h1>
+        </div>
+        <button id="signout" class="link" type="button">Sign out</button>
+      </header>
+      <span class="ornament"><span class="rule"></span><svg viewBox="0 0 24 24" class="ornament-leaf"><path d="M12 2 C 18 7, 21 13, 12 22 C 3 13, 6 7, 12 2 Z" /><path class="vein" d="M12 4 L 12 20" /></svg><span class="rule"></span></span>
+      <p class="lead">What are we recording today?</p>
+      <div class="actions stack-lg">
+        <button class="big" type="button" data-type="monday">
+          <span class="icon">
+            <svg viewBox="0 0 32 32"><path d="M7 4h14l4 4v20H7z" /><path d="M21 4v4h4" class="line" /><path d="M11 13h10M11 17h10M11 21h6" class="line" /></svg>
+          </span>
+          <span class="copy">
+            <span class="label">Monday Tally Sheet</span>
+            <span class="hint">Photo or PDF of Sunday's handwritten sheet</span>
+          </span>
+          <span class="chev" aria-hidden="true">→</span>
+        </button>
+        <button class="big" type="button" data-type="thursday">
+          <span class="icon">
+            <svg viewBox="0 0 32 32"><rect x="5" y="6" width="22" height="20" rx="2" /><path d="M5 11h22M11 6v20M21 6v20" class="line" /></svg>
+          </span>
+          <span class="copy">
+            <span class="label">Thursday EZ Tithe CSV</span>
+            <span class="hint">Payments-*.csv export from the giving portal</span>
+          </span>
+          <span class="chev" aria-hidden="true">→</span>
+        </button>
+      </div>
+      <input type="file" id="picker-monday"   accept=".jpg,.jpeg,.png,.pdf,.heic" hidden>
+      <input type="file" id="picker-thursday" accept=".csv" hidden>
     </div>
-    <input type="file" id="picker-monday"   accept=".jpg,.jpeg,.png,.pdf,.heic" hidden>
-    <input type="file" id="picker-thursday" accept=".csv" hidden>
   </main>
 
-  <main id="review-screen" class="screen" hidden>
-    <header>
-      <h1>Check what we read</h1>
-      <button id="review-cancel" class="link" type="button">Cancel</button>
-    </header>
-    <p class="lead">Tap any number to fix it. Then post.</p>
+  <main id="review-screen" class="screen review" hidden>
+    <div class="screen-inner">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Step two</p>
+          <h1 class="display">Check our work</h1>
+        </div>
+        <button id="review-cancel" class="link" type="button">Cancel</button>
+      </header>
+      <p class="lead">Tap any number to fix it. When it balances, post.</p>
 
-    <p id="review-warn" class="warn" hidden></p>
+      <p id="review-warn" class="warn" hidden></p>
 
-    <label class="inline">
-      Service date
-      <input id="rv-date" type="text" inputmode="numeric" placeholder="YYYY-MM-DD">
-    </label>
+      <label class="inline">
+        <span class="field-label">Service date</span>
+        <input id="rv-date" type="text" inputmode="numeric" placeholder="YYYY-MM-DD">
+      </label>
 
-    <h2 class="section">Totals</h2>
-    <div class="totals-grid">
-      <div class="th">Field</div><div class="th">From rows</div><div class="th">Printed</div>
-      <div class="lbl">Tithe</div><div class="num" data-computed="tithe"></div>             <input class="num-in" data-printed="tithe" type="text" inputmode="decimal">
-      <div class="lbl">Building</div><div class="num" data-computed="building"></div>      <input class="num-in" data-printed="building" type="text" inputmode="decimal">
-      <div class="lbl">Missions</div><div class="num" data-computed="missions"></div>      <input class="num-in" data-printed="missions" type="text" inputmode="decimal">
-      <div class="lbl">Manna</div><div class="num" data-computed="manna"></div>            <input class="num-in" data-printed="manna" type="text" inputmode="decimal">
-      <div class="lbl">Youth</div><div class="num" data-computed="youth"></div>            <input class="num-in" data-printed="youth" type="text" inputmode="decimal">
-      <div class="lbl">Missionary</div><div class="num" data-computed="missionary"></div>  <input class="num-in" data-printed="missionary" type="text" inputmode="decimal">
-      <div class="lbl">Cash</div><div class="num" data-computed="total_cash"></div>        <input class="num-in" data-printed="total_cash" type="text" inputmode="decimal">
-      <div class="lbl">Checks</div><div class="num" data-computed="total_checks"></div>    <input class="num-in" data-printed="total_checks" type="text" inputmode="decimal">
-      <div class="lbl strong">Total</div><div class="num strong" data-computed="total_contributions"></div><input class="num-in strong" data-printed="total_contributions" type="text" inputmode="decimal">
+      <h2 class="section">Totals</h2>
+      <div class="totals-grid">
+        <div class="th">Field</div><div class="th">From rows</div><div class="th">Printed</div>
+        <div class="lbl">Tithe</div><div class="num" data-computed="tithe"></div>             <input class="num-in" data-printed="tithe" type="text" inputmode="decimal">
+        <div class="lbl">Building</div><div class="num" data-computed="building"></div>      <input class="num-in" data-printed="building" type="text" inputmode="decimal">
+        <div class="lbl">Missions</div><div class="num" data-computed="missions"></div>      <input class="num-in" data-printed="missions" type="text" inputmode="decimal">
+        <div class="lbl">Manna</div><div class="num" data-computed="manna"></div>            <input class="num-in" data-printed="manna" type="text" inputmode="decimal">
+        <div class="lbl">Youth</div><div class="num" data-computed="youth"></div>            <input class="num-in" data-printed="youth" type="text" inputmode="decimal">
+        <div class="lbl">Missionary</div><div class="num" data-computed="missionary"></div>  <input class="num-in" data-printed="missionary" type="text" inputmode="decimal">
+        <div class="lbl">Cash</div><div class="num" data-computed="total_cash"></div>        <input class="num-in" data-printed="total_cash" type="text" inputmode="decimal">
+        <div class="lbl">Checks</div><div class="num" data-computed="total_checks"></div>    <input class="num-in" data-printed="total_checks" type="text" inputmode="decimal">
+        <div class="lbl strong">Total</div><div class="num strong" data-computed="total_contributions"></div><input class="num-in strong" data-printed="total_contributions" type="text" inputmode="decimal">
+      </div>
+
+      <h2 class="section">Donors (<span id="rv-count">0</span>)</h2>
+      <div id="rv-donors" class="donors"></div>
+
+      <button id="rv-post" type="button" class="primary primary-wide">Post to QuickBooks</button>
     </div>
-
-    <h2 class="section">Donors (<span id="rv-count">0</span>)</h2>
-    <div id="rv-donors" class="donors"></div>
-
-    <button id="rv-post" type="button" class="primary-wide">Post to QuickBooks</button>
   </main>
 
   <main id="busy-screen" class="screen" hidden>
-    <div class="spinner"></div>
-    <p class="lead">Posting to QuickBooks…</p>
+    <div class="screen-inner busy">
+      <!-- Animated pecan-leaf orbit -->
+      <div class="leaf-orbit" aria-hidden="true">
+        <svg viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="68" class="orbit-ring" />
+          <g class="orbit-leaves">
+            <path d="M100 30 C 112 42, 116 56, 100 72 C 84 56, 88 42, 100 30 Z" />
+          </g>
+          <g class="orbit-leaves orbit-leaves-2">
+            <path d="M170 100 C 158 112, 144 116, 128 100 C 144 84, 158 88, 170 100 Z" />
+          </g>
+          <g class="orbit-leaves orbit-leaves-3">
+            <path d="M100 170 C 88 158, 84 144, 100 128 C 116 144, 112 158, 100 170 Z" />
+          </g>
+          <g class="orbit-leaves orbit-leaves-4">
+            <path d="M30 100 C 42 88, 56 84, 72 100 C 56 116, 42 112, 30 100 Z" />
+          </g>
+        </svg>
+      </div>
+      <p class="lead">Reading the sheet…</p>
+    </div>
   </main>
 
-  <main id="result-screen" class="screen" hidden>
-    <div id="result-ok" hidden>
-      <div class="check">✓</div>
-      <h1>Posted to QuickBooks.</h1>
-      <p class="lead">Deposit #<span id="deposit-id"></span></p>
+  <main id="result-screen" class="screen result" hidden>
+    <div class="screen-inner">
+      <div id="result-ok" hidden>
+        <!-- Falling leaves on success -->
+        <div class="fall" aria-hidden="true">
+          <svg class="fall-leaf f1" viewBox="0 0 24 24"><path d="M12 2 C 18 7, 21 13, 12 22 C 3 13, 6 7, 12 2 Z" /></svg>
+          <svg class="fall-leaf f2" viewBox="0 0 24 24"><path d="M12 2 C 18 7, 21 13, 12 22 C 3 13, 6 7, 12 2 Z" /></svg>
+          <svg class="fall-leaf f3" viewBox="0 0 24 24"><path d="M12 2 C 18 7, 21 13, 12 22 C 3 13, 6 7, 12 2 Z" /></svg>
+          <svg class="fall-leaf f4" viewBox="0 0 24 24"><path d="M12 2 C 18 7, 21 13, 12 22 C 3 13, 6 7, 12 2 Z" /></svg>
+          <svg class="fall-leaf f5" viewBox="0 0 24 24"><path d="M12 2 C 18 7, 21 13, 12 22 C 3 13, 6 7, 12 2 Z" /></svg>
+          <svg class="fall-leaf f6" viewBox="0 0 24 24"><path d="M12 2 C 18 7, 21 13, 12 22 C 3 13, 6 7, 12 2 Z" /></svg>
+          <svg class="fall-leaf f7" viewBox="0 0 24 24"><path d="M12 2 C 18 7, 21 13, 12 22 C 3 13, 6 7, 12 2 Z" /></svg>
+          <svg class="fall-leaf f8" viewBox="0 0 24 24"><path d="M12 2 C 18 7, 21 13, 12 22 C 3 13, 6 7, 12 2 Z" /></svg>
+        </div>
+        <!-- Stroke-drawn check inside a wreath -->
+        <div class="check-wrap">
+          <svg viewBox="0 0 120 120" class="check-svg">
+            <circle cx="60" cy="60" r="52" class="check-ring" />
+            <path d="M38 62 L 54 78 L 84 46" class="check-tick" fill="none" />
+          </svg>
+        </div>
+        <h1 class="display">Deposited.</h1>
+        <p class="lead">Deposit <span class="docnum">#<span id="deposit-id"></span></span> is in QuickBooks.</p>
+      </div>
+      <div id="result-fail" hidden>
+        <div class="x-wrap">
+          <svg viewBox="0 0 120 120" class="x-svg">
+            <circle cx="60" cy="60" r="52" class="x-ring" />
+            <path d="M44 44 L 76 76 M76 44 L 44 76" class="x-mark" fill="none" />
+          </svg>
+        </div>
+        <h1 class="display">That didn't post.</h1>
+        <p class="lead" id="result-error"></p>
+      </div>
+      <button id="again" type="button" class="primary primary-wide">Upload another</button>
     </div>
-    <div id="result-fail" hidden>
-      <div class="x">✕</div>
-      <h1>That didn't work.</h1>
-      <p class="lead" id="result-error"></p>
-    </div>
-    <button id="again" type="button">Upload another</button>
   </main>
+
+  <footer class="page-footer" aria-hidden="false">
+    <span>Pecan Baptist Church · Granbury, TX</span>
+  </footer>
 
   <script src="app.js"></script>
 </body>
