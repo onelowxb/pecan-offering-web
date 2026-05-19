@@ -269,6 +269,14 @@ body::before {
   height: auto;
   filter: drop-shadow(0 4px 10px rgba(60, 38, 18, 0.15));
 }
+/* Compact version used as a header signature on inner pages */
+.brand.brand-sm {
+  margin-bottom: 18px;
+}
+.brand.brand-sm .brand-logo {
+  width: 56px;
+  filter: drop-shadow(0 2px 6px rgba(60, 38, 18, 0.12));
+}
 @keyframes brand-in {
   0%   { opacity: 0; transform: translateY(-10px) scale(0.86) rotate(-4deg); }
   60%  { opacity: 1; transform: translateY(2px) scale(1.04) rotate(1deg); }
