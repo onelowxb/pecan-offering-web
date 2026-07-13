@@ -1,5 +1,10 @@
-// API base. Overridden by config.js for local dev (loaded before this file).
-const API_BASE = window.PECAN_API_BASE || "https://76-13-126-85.sslip.io/pecan";
+// API bases, tried in order. Overridden by config.js for local dev (loaded before
+// this file). Default: same-origin /api (proxied by Netlify to the VPS — survives
+// networks that filter sslip.io), with the direct VPS URL as a fallback.
+const API_BASES = window.PECAN_API_BASE
+  ? [window.PECAN_API_BASE]
+  : ["/api", "https://76-13-126-85.sslip.io/pecan"];
+let apiBaseIdx = 0;
 const TOKEN_KEY = "pecan_token";
 
 const SCREENS = ["login", "main", "review", "busy", "result"];
@@ -23,24 +28,59 @@ function clearToken() {
   try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
 }
 
-async function post(path, body, isForm) {
-  const opts = { method: "POST", headers: {} };
+async function request(method, path, body, isForm) {
+  const opts = { method, headers: {} };
   const token = getToken();
   if (token) opts.headers["Authorization"] = "Bearer " + token;
-  if (isForm) {
-    opts.body = body;
-  } else {
-    opts.headers["Content-Type"] = "application/json";
-    opts.body = JSON.stringify(body);
+  if (body !== undefined) {
+    if (isForm) {
+      opts.body = body;
+    } else {
+      opts.headers["Content-Type"] = "application/json";
+      opts.body = JSON.stringify(body);
+    }
   }
-  let r;
-  try {
-    r = await fetch(API_BASE + path, opts);
-  } catch (e) {
-    return { status: 0, body: { ok: false, error: "Can't reach the server. Check your wi-fi." } };
+  // Try the current base; on a network-level failure, fall over to the next base once.
+  for (let attempt = 0; attempt < API_BASES.length; attempt++) {
+    try {
+      const r = await fetch(API_BASES[apiBaseIdx] + path, opts);
+      const json = await r.json().catch(() => ({}));
+      return { status: r.status, body: json };
+    } catch (e) {
+      if (apiBaseIdx < API_BASES.length - 1) {
+        apiBaseIdx++; // sticky — later calls use the base that works
+        continue;
+      }
+      return { status: 0, body: { ok: false, error: "Can't reach the server. Check your wi-fi." } };
+    }
   }
-  const json = await r.json().catch(() => ({}));
-  return { status: r.status, body: json };
+}
+
+function post(path, body, isForm) {
+  return request("POST", path, body, isForm);
+}
+
+// Submit long-running work (/upload, /confirm) as a background job and poll for the
+// result. Individual requests stay short, so the Netlify proxy's ~26s cap never bites.
+async function postJob(path, body, isForm) {
+  const submit = await post("/jobs" + path, body, isForm);
+  if (submit.status !== 200 || !submit.body.ok || !submit.body.job_id) {
+    return submit; // auth failure, bad file type, network error — same shape as before
+  }
+  const jobId = submit.body.job_id;
+  let misses = 0;
+  for (let i = 0; i < 150; i++) { // ~5 minutes at 2s
+    await new Promise((res) => setTimeout(res, 2000));
+    const poll = await request("GET", "/jobs/" + jobId);
+    if (poll.status === 0) {
+      if (++misses >= 5) return poll; // persistent network loss
+      continue; // transient blip — keep polling
+    }
+    misses = 0;
+    if (poll.status !== 200) return poll; // 401 → login bounce, 404 → expired
+    if (poll.body.status === "done") return { status: 200, body: poll.body.result || {} };
+  }
+  return { status: 0, body: { ok: false, error: "This is taking too long — text Ben." } };
 }
 
 // On load: if we have a stored token, skip to main screen (best effort — server
@@ -108,7 +148,7 @@ for (const type of ["monday", "thursday"]) {
     const fd = new FormData();
     fd.append("type", type);
     fd.append("file", file);
-    const { status, body } = await post("/upload", fd, true);
+    const { status, body } = await postJob("/upload", fd, true);
     e.target.value = "";
 
     if (status === 401) {
@@ -387,7 +427,7 @@ document.getElementById("rv-post").addEventListener("click", async () => {
   REVIEW.parsed.service_date = document.getElementById("rv-date").value.trim();
   show("busy");
   document.querySelector("#busy-screen .lead").textContent = "Posting to QuickBooks…";
-  const { status, body } = await post("/confirm", {
+  const { status, body } = await postJob("/confirm", {
     review_token: REVIEW.review_token,
     parsed: REVIEW.parsed,
     filename: REVIEW.filename,

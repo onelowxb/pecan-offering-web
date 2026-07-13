@@ -2,6 +2,15 @@
   publish = "."
   # No build step — static files only.
 
+# Proxy API calls through Netlify so the browser only ever talks to this domain.
+# (Janie's network filter blocks sslip.io — 2026-07-13. Netlify's edge does the
+# fetch server-side, so client DNS/content filters never see the VPS hostname.)
+[[redirects]]
+  from = "/api/*"
+  to = "https://76-13-126-85.sslip.io/pecan/:splat"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
